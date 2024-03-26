@@ -1,34 +1,34 @@
 <template>
   <div id="app">
-    <h1>TASK MANAGEMENT</h1>
-    <hr>
+    <h1 style="color: green;">TASK MANAGEMENT</h1>
+    <hr style="border-color: green;">
     <div class="input-container">
-      <button class="add-button" @click="showTaskForm = true">Add New Task</button>
+      <button class="add-button" @click="showTaskForm = true" style="background-color: green; color: white;">Add New
+        Task</button>
     </div>
-    <div v-if="showTaskForm" class="task-form">
-      <h2>Add New Task</h2>
-      <label>Task Name:</label>
-      <input type="text" placeholder="Enter Task Name" v-model="taskName">
-      <label>Task Description:</label>
-      <input type="text" placeholder="Enter Task Description" v-model="taskDescription">
-      <label>Deadline:</label>
-      <input type="date" v-model="deadline">
-      <label>Remarks:</label>
-      <select v-model="remarks">
+    <div v-if="showTaskForm" class="task-form" style="border-color: green;">
+      <h2 style="color: green;">Add New Task</h2>
+      <label style="color: green;">Task Name:</label>
+      <input type="text" placeholder="Enter Task Name" v-model="taskName" style="border-color: green;">
+      <label style="color: green;">Task Description:</label>
+      <input type="text" placeholder="Enter Task Description" v-model="taskDescription" style="border-color: green;">
+      <label style="color: green;">Deadline:</label>
+      <input type="date" v-model="deadline" style="border-color: green;">
+      <label style="color: green;">Remarks:</label>
+      <select v-model="remarks" style="border-color: green;">
         <option value="priority">Priority</option>
         <option value="pending">Pending</option>
-        <option value="completed">Completed</option>
       </select>
       <br>
-      <button @click="addTask">Add Task</button> | 
-      <button @click="closeTaskForm" class="close-button">Close</button> <!-- Close button -->
+      <button @click="addTask" style="background-color: green; color: white;">Add Task</button> |
+      <button @click="closeTaskForm" class="close-button" style="color: white; background-color: black;">Close</button>
     </div>
     <nav>
-      <router-link to="/" class="router-link">Priority Tasks</router-link> |
-      <router-link to="/pending" class="router-link">Pending Tasks</router-link> |
-      <router-link to="/completed" class="router-link">Completed Tasks</router-link>
+      <router-link to="/" class="router-link">Priority Tasks ({{ priorityTasks.length }})</router-link> |
+      <router-link to="/pending" class="router-link">Pending Tasks ({{ pendingTasks.length }})</router-link> |
+      <router-link to="/completed" class="router-link">Completed Tasks ({{ completedTasks.length }})</router-link>
     </nav>
-    <router-view />
+    <router-view :priorityTasks="priorityTasks" :pendingTasks="pendingTasks" :completedTasks="completedTasks" />
   </div>
 </template>
 
@@ -40,35 +40,50 @@ export default {
       taskName: '',
       taskDescription: '',
       deadline: '',
-      remarks: 'priority'
+      remarks: 'priority',
+      priorityTasks: [],
+      pendingTasks: [],
+      completedTasks: []
     };
   },
   methods: {
     addTask() {
-      // Here you can handle adding the task
-      // For demonstration purposes, let's just log the task details
-      console.log("Task Name:", this.taskName);
-      console.log("Task Description:", this.taskDescription);
-      console.log("Deadline:", this.deadline);
-      console.log("Remarks:", this.remarks);
+      if (!this.taskName || !this.taskDescription || !this.deadline) {
+        alert('Please fill in all fields before adding the task.');
+        return;
+      }
 
-      // Reset form fields
+      const newTask = {
+        name: this.taskName,
+        description: this.taskDescription,
+        deadline: this.deadline
+      };
+
+      switch (this.remarks) {
+        case 'priority':
+          this.priorityTasks.push(newTask);
+          break;
+        case 'pending':
+          this.pendingTasks.push(newTask);
+          break;
+        case 'completed':
+          this.completedTasks.push(newTask);
+          break;
+        default:
+          break;
+      }
+
       this.taskName = '';
       this.taskDescription = '';
       this.deadline = '';
-      this.remarks = 'priority';
-
-      // Hide task form
       this.showTaskForm = false;
     },
     closeTaskForm() {
-      // Close task form
       this.showTaskForm = false;
     }
   }
 };
 </script>
-
 
 <style>
 #app {
@@ -76,14 +91,14 @@ export default {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
-  color: #2c3e50;
+
 }
 
 .add-button {
   padding: 10px 20px;
   margin-left: 10px;
-  background-color: #42b983;
-  color: #fff;
+  background-color: green;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -92,12 +107,12 @@ export default {
 }
 
 .add-button:hover {
-  background-color: #2a7a5d;
+  background-color: black;
 }
 
 .task-form {
   margin-top: 20px;
-  border: 1px solid #ccc;
+  border: 1px solid green;
   padding: 20px;
   border-radius: 5px;
   width: 500px;
@@ -115,19 +130,20 @@ export default {
   width: 400px;
   padding: 8px;
   margin-bottom: 10px;
+  border-color: green;
 }
 
 .task-form button {
   padding: 10px 20px;
-  background-color: #42b983;
-  color: #fff;
+  background-color: green;
+  color: white;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .task-form button:hover {
-  background-color: #2a7a5d;
+  background-color: black;
 }
 
 nav {
@@ -136,26 +152,29 @@ nav {
 
 nav a {
   font-weight: bold;
-  color: #2c3e50;
+  color: green;
   text-decoration: none;
   font-size: 25px;
-  /* Remove underline */
 }
 
-/* Style active router link */
-nav a.router-link-exact-active {
-  color: #42b983;
+nav a.router-link-active {
+  color: black;
 }
 
-/* Style router links */
 .router-link {
   margin-right: 10px;
-  color: #2c3e50;
+  color: green;
 }
 
-/* Hover effect */
 .router-link:hover {
-  color: #42b983;
-  /* Change color on hover */
+  color: black;
+}
+
+.router-link-exact-active {
+  color: green;
+}
+
+.router-link-exact-active:hover {
+  color: black;
 }
 </style>
